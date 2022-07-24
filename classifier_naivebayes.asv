@@ -1,0 +1,116 @@
+%naive bayes function
+%created by: Rowan Iskandar
+%last modified: 22july2022
+%use: coms4771 summerb2022 hw1, hw2
+function p = classifier_naivebayes(X_train, Y_train, x_test, num_class, num_features)
+        train = cat(2,X_train,Y_train);
+        num_data = size(X_train,1);
+
+        prior = zeros(1,num_class);
+        for k=1:num_class
+            prior(k)=sum(Y_train(:)==k-1)/length(Y_train);
+        end
+        %multinomial estimators of conditional class probabilities (P(X,Y)
+
+        mean_agecat = (1/num_data)*[sum(X_train(:,2)==1),sum(X_train(:,2)==2),...
+            sum(X_train(:,2)==3),sum(X_train(:,2)==4)];
+        
+        mean_juvfelcat = (1/num_data)*[sum(X_train(:,4)==1),sum(X_train(:,4)==2),...
+            sum(X_train(:,4)==3);
+        
+        mean_juvmisdcat = (1/num_data)*[sum(X_train(:,5)==1),sum(X_train(:,5)==2),...
+            sum(X_train(:,5)==3);
+        
+        mean_juvothercat = (1/num_data)*[numel(data_train.juvothercat(data_train.juvothercat==0)),numel(data_train.juvothercat(data_train.juvothercat==1)),...
+            numel(data_train.juvothercat(data_train.juvothercat==2))];
+        
+        mean_priorscat = (1/num_data)*[numel(data_train.priorscat(data_train.priorscat==0)),numel(data_train.priorscat(data_train.priorscat==1)),...
+            numel(data_train.priorscat(data_train.priorscat==2)),numel(data_train.priorscat(data_train.priorscat==3)),...
+            numel(data_train.priorscat(data_train.priorscat==4))];
+        
+        mean_sex = (1/num_data)*[numel(data_train.sex(data_train.sex==0)),numel(data_train.sex(data_train.sex==1))];
+        mean_race = (1/num_data)*[numel(data_train.race(data_train.race==0)),numel(data_train.race(data_train.race==1))];
+        mean_chargeF = (1/num_data)*[numel(data_train.c_charge_degree_F(data_train.c_charge_degree_F==0)),numel(data_train.c_charge_degree_F(data_train.c_charge_degree_F==1))];
+
+
+        if (data_test.sex == 0)
+            psex=mean_sex(1);
+        else
+            psex=mean_sex(2);
+        end
+        
+        if (data_test.race == 0)
+            prace=mean_race(1);
+        else
+            prace=mean_race(2);
+        end
+        
+        if (data_test.c_charge_degree_F == 0)
+            pchargeF=mean_chargeF(1);
+        else
+            pchargeF=mean_chargeF(2);
+        end
+        
+        if (data_test.agecat == 1)
+            page=mean_agecat(1);
+        elseif (data_test.agecat == 2)
+            page=mean_agecat(2);
+        elseif (data_test.agecat == 3)
+            page=mean_agecat(3);
+        elseif (data_test.agecat == 4)
+            page=mean_agecat(4);
+        end
+        
+        if (data_test.juvfelcat == 1)
+            pjuvfel=mean_juvfelcat(1);
+        elseif (data_test.juvfelcat == 2)
+            pjuvfel=mean_juvfelcat(2);
+        elseif (data_test.juvfelcat == 3)
+            pjuvfel=mean_juvfelcat(3);
+        end
+        
+        if (data_test.juvfelcat == 1)
+            pjuvfel=mean_juvfelcat(1);
+        elseif (data_test.juvfelcat == 2)
+            pjuvfel=mean_juvfelcat(2);
+        elseif (data_test.juvfelcat == 3)
+            pjuvfel=mean_juvfelcat(3);
+        end
+        
+        if (data_test.juvmisdcat == 1)
+            pjuvmisd=mean_juvmisdcat(1);
+        elseif (data_test.juvmisdcat == 2)
+            pjuvmisd=mean_juvmisdcat(2);
+        elseif (data_test.juvmisdcat == 3)
+            pjuvmisd=mean_juvmisdcat(3);
+        end
+        
+        if (data_test.juvothercat == 1)
+            pjuvother=mean_juvothercat(1);
+        elseif (data_test.juvothercat == 2)
+            pjuvother=mean_juvothercat(2);
+        elseif (data_test.juvothercat == 3)
+            pjuvother=mean_juvothercat(3);
+        end
+        
+        if (data_test.priorscat == 1)
+            ppriors=mean_priorscat(1);
+        elseif (data_test.priorscat == 2)
+            ppriors=mean_priorscat(2);
+        elseif (data_test.priorscat == 3)
+            ppriors=mean_priorscat(3);
+        elseif (data_test.priorscat == 4)
+            ppriors=mean_priorscat(4);
+        elseif (data_test.priorscat == 5)
+            ppriors=mean_priorscat(5);
+        end
+
+        score = zeros(num_class);
+        
+        for k=1:num_class
+            score(k)= page*prace*psex*pjuvfel*pjuvmisd*pjuvother*ppriors*pchargeF*prior(k);
+        end
+
+        score_optim = max(score);
+        class = find(score==score_optim)-1;
+end
